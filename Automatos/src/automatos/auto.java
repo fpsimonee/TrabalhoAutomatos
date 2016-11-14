@@ -8,7 +8,6 @@ package automatos;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -106,40 +105,44 @@ public class auto {
 
     public static void main(String[] args) throws FileNotFoundException {
         //int vl = ValidaVar("testo_");
-        
+
         ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
+        String atribuicao= null; 
+        leArquivo(atrs,atribuicao);
+        int i=0;
+        
+        while(atribuicao.charAt(i)!=';'){
+        atrs.lastIndexOf(atrs);
+        i++;
+        }
+        
+    }
+
+    public static void leArquivo(ArrayList atrs, String atribuicao) throws FileNotFoundException {
+//        ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
         InputStream is = new FileInputStream("arquivo");
         Scanner entrada = new Scanner(is);
         String line = null;
-        double result=0;
-        String[] splitQuebraLinha;
         // delimitando o final das atribuicoes 
 
         while (entrada.hasNext()) {
             line = entrada.nextLine();
-            splitQuebraLinha = QuebraLinha(line);
-            
-            if(ValidaVar(splitQuebraLinha[0])==1){
-               Atribuicao a = new Atribuicao();
-               // indice 0 pega antes do igual
-               a.setIdentificador(splitQuebraLinha[0]);
-               // o igual se torna indice 1,. entao o valor se torna indice 2
-               a.setValor(splitQuebraLinha[2]);
-               atrs.add(a);
+            String[] splitText = line.split(" ");
+
+            while (line.length() != 0) {
+
+                if ((ValidaVar(splitText[0]) == 1) && (ValidaNum(splitText[2]) == 1)) {
+                    Atribuicao atrib = new Atribuicao();
+                    atrib.setIdentificador(splitText[0]);
+                    atrib.setValor(splitText[2]);
+                }
             }
-      
+            if(line.length()==0)
+                line = entrada.nextLine();
+            else 
+                atribuicao = line;
         }
         
-        
-    }
-    
-    public static String[] QuebraLinha(String line){
-        String teste = line;
-        String[] splitTeste = teste.split(" ");
-//        System.out.println(splitTeste[0]);
-//        System.out.println(splitTeste[1]);
-//        System.out.println(splitTeste[2]);  
-        return splitTeste;
     }
 
     public static int ValidaVar(String text) {
@@ -167,7 +170,7 @@ public class auto {
             }
 
         } // fim da verificacao das posicoes
-        else { 
+        else {
             // string e invalida
             textoStatus = 0;
 
@@ -175,7 +178,7 @@ public class auto {
 
         return textoStatus;
     }
-    
+
     public static int ValidaNum(String text) {
         String texto = text;
         int textoStatus = 0;  // Status da Validacao 
@@ -183,13 +186,24 @@ public class auto {
         // textoStatus = 1 - nome de variavel valido
 
         int first = texto.charAt(0);
-        
-        if(first >= 48 && first <= 57){
-           textoStatus = 1;
-        }else{
-            
+
+        if (first >= 48 && first <= 57) {
+            textoStatus = 1;
+            for (int j = 1; j < texto.length(); j++) {
+                int getchar = texto.charAt(j);
+                if (getchar == 46 && (texto.length() - j > 0)) {
+                    textoStatus = 1;
+                } else if ((getchar >= 48 && getchar <= 57)) {
+                    textoStatus = 1;
+                } else {
+                    textoStatus = 0;
+                }
+
+            }
+        } else {
+            textoStatus = 0;
         }
-        
+
         return textoStatus;
     }
 
