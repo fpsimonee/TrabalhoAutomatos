@@ -107,15 +107,35 @@ public class auto {
         //int vl = ValidaVar("testo_");
 
         ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
-        String atribuicao= null; 
-        leArquivo(atrs,atribuicao);
-        int i=0;
-        
-        while(atribuicao.charAt(i)!=';'){
-        atrs.lastIndexOf(atrs);
-        i++;
+        String atribuicao = null;
+        leArquivo(atrs, atribuicao);
+        String[] splitAtribuicao = atribuicao.split(" ");
+        int statusatrib = 0;
+        double result = 0;
+
+        if (atribuicao.endsWith(";") != true) {
+            System.out.println("Atribuicao inválida!");
+        } else {
+            for (int i = 0; i < splitAtribuicao.length; i++) {
+                int getchar = splitAtribuicao[i].charAt(0);
+
+                if ((getchar >= 48 && getchar <= 57)) {
+                    statusatrib = ValidaNum(splitAtribuicao[i]);
+                    if (statusatrib == 1) {
+                        result += Double.parseDouble(splitAtribuicao[i]);
+                    }
+                } else {
+                    statusatrib = ValidaVar(splitAtribuicao[i]);
+                    if (statusatrib == 1) {
+                        result += Double.parseDouble(atrs.get(atrs.lastIndexOf(splitAtribuicao[i])).getValor());
+                    }
+                }
+            }
+
+            
+
         }
-        
+        System.out.println(result);
     }
 
     public static void leArquivo(ArrayList atrs, String atribuicao) throws FileNotFoundException {
@@ -137,12 +157,13 @@ public class auto {
                     atrib.setValor(splitText[2]);
                 }
             }
-            if(line.length()==0)
+            if (line.length() == 0) {
                 line = entrada.nextLine();
-            else 
+            } else {
                 atribuicao = line;
+            }
         }
-        
+
     }
 
     public static int ValidaVar(String text) {
