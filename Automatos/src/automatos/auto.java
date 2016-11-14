@@ -5,7 +5,12 @@
  */
 package automatos;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import static java.lang.System.exit;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /*
 
@@ -99,8 +104,31 @@ z - 122
  */
 public class auto {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         //int vl = ValidaVar("testo_");
+        
+        ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
+        InputStream is = new FileInputStream("arquivo");
+        Scanner entrada = new Scanner(is);
+        String line = null;
+        double result=0;
+        String[] splitQuebraLinha;
+        // delimitando o final das atribuicoes 
+
+        while (entrada.hasNext()) {
+            line = entrada.nextLine();
+            splitQuebraLinha = QuebraLinha(line);
+            
+            if(ValidaVar(splitQuebraLinha[0])==1){
+               Atribuicao a = new Atribuicao();
+               // indice 0 pega antes do igual
+               a.setIdentificador(splitQuebraLinha[0]);
+               // o igual se torna indice 1,. entao o valor se torna indice 2
+               a.setValor(splitQuebraLinha[2]);
+               atrs.add(a);
+            }
+      
+        }
         
         
     }
@@ -145,6 +173,23 @@ public class auto {
 
         }
 
+        return textoStatus;
+    }
+    
+    public static int ValidaNum(String text) {
+        String texto = text;
+        int textoStatus = 0;  // Status da Validacao 
+        // textoStatus = 0 - nome de variavel invalido 
+        // textoStatus = 1 - nome de variavel valido
+
+        int first = texto.charAt(0);
+        
+        if(first >= 48 && first <= 57){
+           textoStatus = 1;
+        }else{
+            
+        }
+        
         return textoStatus;
     }
 
