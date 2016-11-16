@@ -107,63 +107,110 @@ public class auto {
         //int vl = ValidaVar("testo_");
 
         ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
-        String atribuicao = null;
-        leArquivo(atrs, atribuicao);
+        ArrayList<String> oper = new ArrayList<>();
+        ArrayList<String> atribuicaoVet = new ArrayList<>();
+        String atribuicao = leArquivoAtribuicao();
+//        Pilha<String> pilha = new Pilha<>();
+        atrs = leArquivoValores();
         String[] splitAtribuicao = atribuicao.split(" ");
         int statusatrib = 0;
         double result = 0;
 
-        if (atribuicao.endsWith(";") != true) {
-            System.out.println("Atribuicao inválida!");
-        } else {
-            for (int i = 0; i < splitAtribuicao.length; i++) {
-                int getchar = splitAtribuicao[i].charAt(0);
+        System.out.println(atribuicao);
+        
+//        if(splitAtribuicao[splitAtribuicao.length-1]!=";"){
+//            System.out.println("Atribuicao invalida!");
+//        }
 
-                if ((getchar >= 48 && getchar <= 57)) {
-                    statusatrib = ValidaNum(splitAtribuicao[i]);
-                    if (statusatrib == 1) {
-                        result += Double.parseDouble(splitAtribuicao[i]);
-                    }
-                } else {
-                    statusatrib = ValidaVar(splitAtribuicao[i]);
-                    if (statusatrib == 1) {
-                        result += Double.parseDouble(atrs.get(atrs.lastIndexOf(splitAtribuicao[i])).getValor());
-                    }
+        for (int i = 0; i < splitAtribuicao.length; i++) {
+            int getchar = splitAtribuicao[i].charAt(0);
+
+            if(splitAtribuicao[i].length()==1){
+              oper.add(splitAtribuicao[i]);
+            }
+            else{
+                // variavel iniciando com letra minuscula
+                if(getchar >= 97 && getchar <= 122){
+                   statusatrib = ValidaVar(splitAtribuicao[i]);  
+                   if(statusatrib==1){
+                     atribuicaoVet.add(splitAtribuicao[i]);
+                   }
+                }else{
+                  statusatrib = ValidaNum(splitAtribuicao[i]);  
+                  if(statusatrib==1){
+                     atribuicaoVet.add(splitAtribuicao[i]);
+                   }
                 }
             }
-
-            
-
+             
         }
-        System.out.println(result);
+        
+        for(int i=1; i<atribuicaoVet.size();i++){
+          if(oper.get(i).equals("+")){
+            result += Double.parseDouble(atribuicaoVet.get(i));
+          }
+          if(oper.get(i).equals("-")){
+            result -= Double.parseDouble(atribuicaoVet.get(i));
+          }
+          if(oper.get(i).equals("/")){
+            result -= Double.parseDouble(atribuicaoVet.get(i));
+          }
+          if(oper.get(i).equals("*")){
+            result -= Double.parseDouble(atribuicaoVet.get(i));
+          }        
+        }
+        
+        
     }
 
-    public static void leArquivo(ArrayList atrs, String atribuicao) throws FileNotFoundException {
-//        ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
+  
+
+    public static String leArquivoAtribuicao() throws FileNotFoundException {
+
+        String atribuicao = null;
         InputStream is = new FileInputStream("arquivo");
         Scanner entrada = new Scanner(is);
         String line = null;
-        // delimitando o final das atribuicoes 
 
+        // delimitando o final das atribuicoes 
         while (entrada.hasNext()) {
             line = entrada.nextLine();
             String[] splitText = line.split(" ");
 
-            while (line.length() != 0) {
+            if (splitText.length > 3) {
+
+                atribuicao = line;
+
+            }
+        }
+        return atribuicao;
+    }
+
+    public static ArrayList<Atribuicao> leArquivoValores() throws FileNotFoundException {
+
+        ArrayList<Atribuicao> atrs = new ArrayList<Atribuicao>();
+        InputStream is = new FileInputStream("arquivo");
+        Scanner entrada = new Scanner(is);
+        String line = null;
+
+        // delimitando o final das atribuicoes 
+        while (entrada.hasNext()) {
+            line = entrada.nextLine();
+            String[] splitText = line.split(" ");
+
+            if (splitText.length == 3) {
 
                 if ((ValidaVar(splitText[0]) == 1) && (ValidaNum(splitText[2]) == 1)) {
                     Atribuicao atrib = new Atribuicao();
                     atrib.setIdentificador(splitText[0]);
                     atrib.setValor(splitText[2]);
+                    atrs.add(atrib);
+
                 }
-            }
-            if (line.length() == 0) {
-                line = entrada.nextLine();
-            } else {
-                atribuicao = line;
+
             }
         }
-
+        return atrs;
     }
 
     public static int ValidaVar(String text) {
